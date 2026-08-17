@@ -28,9 +28,9 @@ type StoryResponse = {
 };
 
 async function fetchConfigStory(): Promise<NavigationBlock | null> {
-  const token = process.env.STORYBLOK_DELIVERY_TOKEN;
+  const token = process.env.STORYBLOK_DELIVERY_API_TOKEN;
   if (!token) {
-    console.error("Missing STORYBLOK_DELIVERY_TOKEN");
+    console.error("Missing STORYBLOK_DELIVERY_API_TOKEN");
     return null;
   }
   const version = process.env.NODE_ENV === "production" ? "published" : "draft";
