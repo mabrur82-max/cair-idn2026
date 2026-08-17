@@ -1,7 +1,7 @@
 import * as React from 'react'
 import NextImage from 'next/image'
 import Link from 'next/link'
-import AppBarView from './AppBar'
+///import AppBarView from './AppBar'
 import FooterView from './Footer'
 
 export type NotFoundPageProps = {
