@@ -3,8 +3,7 @@
 import React from "react";
 
 type StoryblokLink = { url?: string; cached_url?: string; story?: { slug: string } } | string;
-type NavItem = { _uid: string; label?: string; href?: StoryblokLink; component?: string };
-
+type NavItem = { _uid: string; label?: string; href?: StoryblokLink; link?: StoryblokLink; component?: string };
 type NavigationBlock = {
   _uid?: string;
   cta_label?: string;
@@ -24,16 +23,17 @@ function normalizeCachedUrl(raw?: string) {
 function getLinkUrl(link?: StoryblokLink) {
   if (!link) return "#";
   if (typeof link === "string") return link;
-  if ((link as any).cached_url) return normalizeCachedUrl((link as any).cached_url);
-  if ((link as any).url) return (link as any).url;
-  if ((link as any).story?.slug) return `/${(link as any).story.slug}`;
+  if (typeof link === "object" && link !== null) {
+    if ("cached_url" in link && typeof link.cached_url === "string") return normalizeCachedUrl(link.cached_url);
+    if ("url" in link && typeof link.url === "string") return link.url;
+    if ("story" in link && link.story && typeof link.story.slug === "string") return `/${link.story.slug}`;
+  }
   return "#";
 }
 
-// NOTE: make config optional so callers that don't pass it (e.g. ErrorPage) won't break the build
 export default function AppBar({ config = null }: { config?: NavigationBlock | null }) {
-  // Fallback UI when no config provided (prevents TypeScript errors and shows a minimal header)
   if (!config) {
+    // simple fallback header
     return (
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -50,6 +50,7 @@ export default function AppBar({ config = null }: { config?: NavigationBlock | n
     <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {config.brand_icon?.filename && (
+          // Consider switching to Next.js <Image /> later for optimization
           <img src={config.brand_icon.filename} alt={config.brand_name ?? "brand"} style={{ height: 48 }} />
         )}
         <span style={{ fontWeight: 600 }}>{config.brand_name}</span>
@@ -57,9 +58,9 @@ export default function AppBar({ config = null }: { config?: NavigationBlock | n
 
       <nav>
         <ul style={{ display: "flex", gap: 20, listStyle: "none", margin: 0, padding: 0 }}>
-          {config.nav_items?.map((item) => {
-            // In your JSON nav items use field "href"
-            const href = getLinkUrl((item as any).href ?? (item as any).link);
+          {config.nav_items?.map((item: NavItem) => {
+            const hrefSource = item.href ?? item.link;
+            const href = getLinkUrl(hrefSource);
             return (
               <li key={item._uid}>
                 <a href={href} style={{ textDecoration: "none", color: "#111" }}>
