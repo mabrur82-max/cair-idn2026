@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { storyblokEditable } from '@storyblok/react/rsc'
-import AppBar from '../components/AppBar'
 import Footer from '../components/Footer'
 import type { PageContent } from '../content'
 import Content from './Content'
@@ -15,7 +14,7 @@ function Page(props: PageProps) {
       className="flex flex-col items-stretch"
       {...storyblokEditable(props.blok)}
     >
-      <AppBar />
+      {/* AppBar is rendered globally in src/app/layout.tsx; remove local AppBar here to avoid duplicate headers */}
       {props.blok.body?.map((content, index) => (
         <Content
           blok={content}
