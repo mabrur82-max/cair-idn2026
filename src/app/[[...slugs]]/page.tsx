@@ -91,7 +91,7 @@ export default async function DynamicPage(props: DynamicPageProps) {
 
   return (
     <StoryblokStory
-      story={sanitizedStory as any}
+      story={sanitizedStory as unknown as Record<string, unknown>}
       bridgeOptions={{
         resolveRelations,
       }}
