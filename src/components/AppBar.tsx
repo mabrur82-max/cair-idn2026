@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 type StoryblokLink = { url?: string; cached_url?: string; story?: { slug: string } } | string;
 type NavItem = { _uid: string; label?: string; href?: StoryblokLink; link?: StoryblokLink; component?: string };
@@ -16,7 +17,7 @@ type NavigationBlock = {
 function normalizeCachedUrl(raw?: string) {
   if (!raw) return "#";
   if (raw.startsWith("http")) return raw;
-  const cleaned = raw.replace(/^\/?pages\//, "").replace(/^\/+/, "");
+  const cleaned = raw.replace(/^\/?pages\//, "").replace(/^\//, "");
   return "/" + cleaned;
 }
 
@@ -50,8 +51,9 @@ export default function AppBar({ config = null }: { config?: NavigationBlock | n
     <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {config.brand_icon?.filename && (
-          // Consider switching to Next.js <Image /> later for optimization
-          <img src={config.brand_icon.filename} alt={config.brand_name ?? "brand"} style={{ height: 48 }} />
+          <div style={{ width: 160, height: 48, position: "relative" }}>
+            <Image src={config.brand_icon.filename} alt={config.brand_name ?? "brand"} width={160} height={48} style={{ objectFit: "contain" }} />
+          </div>
         )}
         <span style={{ fontWeight: 600 }}>{config.brand_name}</span>
       </div>
@@ -72,10 +74,7 @@ export default function AppBar({ config = null }: { config?: NavigationBlock | n
 
           {config.cta_label && config.cta_link && (
             <li>
-              <a
-                href={getLinkUrl(config.cta_link)}
-                style={{ padding: "8px 12px", background: "#0070f3", color: "#fff", borderRadius: 6, textDecoration: "none" }}
-              >
+              <a href={getLinkUrl(config.cta_link)} style={{ padding: "8px 12px", background: "#0070f3", color: "#fff", borderRadius: 6, textDecoration: "none" }}>
                 {config.cta_label}
               </a>
             </li>
