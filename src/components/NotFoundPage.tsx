@@ -15,7 +15,7 @@ function NotFoundPage(props: NotFoundPageProps) {
         props.className ?? ''
       }`}
     >
-      <AppBarView />
+     
       <div className="flex-1 self-stretch px-20 pt-24 flex flex-col justify-between items-center gap-12">
         <div className="flex flex-col justify-start items-center gap-6">
           <div className="flex flex-col justify-start items-center gap-2">
