@@ -72,18 +72,26 @@ export default async function DynamicPage(props: DynamicPageProps) {
 
   const { story } = await getStory(paramsResult.value.slugs, bridgeSearchParams)
 
-  // Parsing: uncomment the lines below to perform runtime validation of the story content
-  // const contentResult = parseContent(story.content)
-  // if (contentResult.error) {
-  //   throw new Error(
-  //     `Failed to parse story content: ${formatResult(contentResult)}`,
-  //   )
-  // }
-  // story.content = contentResult.value
+  // Remove any navigation blocks from the story content so the global AppBar/Layout provides the header
+  const sanitizedStory = (() => {
+    if (!story || !story.content) return story
+    const content = story.content as { body?: unknown }
+    const body = Array.isArray(content.body)
+      ? content.body.filter((b) => {
+          if (typeof b === 'object' && b !== null) {
+            const comp = (b as Record<string, unknown>)['component']
+            return comp !== 'navigation'
+          }
+          return true
+        })
+      : content.body
+
+    return { ...story, content: { ...content, body } }
+  })()
 
   return (
     <StoryblokStory
-      story={story}
+      story={sanitizedStory as any}
       bridgeOptions={{
         resolveRelations,
       }}
